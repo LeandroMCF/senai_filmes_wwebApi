@@ -11,7 +11,7 @@ namespace senai_filmes_wwebApi.Domains
     public class FIlmeDomain
     {
         public int IdFIlme { get; set; }
-        public int IdGenero { get; set; }
+        public int ?IdGenero { get; set; }
         public string Titulo { get; set; }
     }
 }

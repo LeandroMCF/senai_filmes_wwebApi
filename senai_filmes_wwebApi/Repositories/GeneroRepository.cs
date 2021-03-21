@@ -17,17 +17,17 @@ namespace senai_filmes_wwebApi.Repositories
         /// <summary>
         /// String de conexão com o banco de dados que recebe os parâmetros
         /// </summary>
-        //private string conexao = "Data Source=DESKTOP-LFIP8ID; initial catalog=Filmes; inteegrated security=true; user Id=...; pwwd=... <- autentificação pelo id e senha
-        private string conexao = "Data Source=DESKTOP-LFIP8ID; initial catalog=Filmes; inteegrated security=true"; //<- autentificação pelo Windows
+        //private string conexao = "Data Source=DESKTOP-LFIP8ID; initial catalog=Filmes; integrated security=true; user Id=...; pwd=... <- autentificação pelo id e senha
+        private string conexao = "Data Source=DESKTOP-LFIP8ID; initial catalog=Filmes; integrated security=true"; //<- autenticação pelo Windows
 
         public void AtualizarIdCorpo(GeneroDomain genero)
         {
-            
+            throw new NotImplementedException();
         }
 
         public void AtualizarIdUrl(int id, GeneroDomain genero)
         {
-            
+            throw new NotImplementedException();
         }
 
         public GeneroDomain BuscarPorId(int id)
@@ -35,14 +35,39 @@ namespace senai_filmes_wwebApi.Repositories
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Cadastra um novo genero
+        /// </summary>
+        /// <param name="novoGenero">Objeto com as informações que serão cadastradas</param>
         public void Cadastrar(GeneroDomain novoGenero)
         {
-            
+            using (SqlConnection con = new SqlConnection(conexao))
+            {
+                string adicionando = "INSERT INTO Generos(Nome) VALUES ('" + novoGenero.Nome +  "')";
+
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand(adicionando, con))
+                {
+                    //Executa o adicionando 
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         public void Deletar(int id)
         {
+            using (SqlConnection con = new SqlConnection(conexao))
+            {
+                string excluindo = "DELETE FROM Generos WHERE IdGenero =" + id + "";
 
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand(excluindo, con))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         /// <summary>
@@ -78,7 +103,7 @@ namespace senai_filmes_wwebApi.Repositories
                         GeneroDomain genero = new GeneroDomain()
                         {
                             IdGenero = Convert.ToInt32(rdr[0]),
-                            Nome = Convert.ToString(rdr[1])
+                            Nome = (rdr[1]).ToString()
                         };
 
                         listaGeneros.Add(genero);

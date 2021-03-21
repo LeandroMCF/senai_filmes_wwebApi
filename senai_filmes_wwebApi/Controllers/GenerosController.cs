@@ -21,12 +21,13 @@ namespace senai_filmes_wwebApi.Controllers
 
     //Define que é um controlador de API
     [ApiController]
+
     public class GenerosController : ControllerBase
     {
         /// <summary>
         /// Objeto que irrá receber todos os metodos definidos na interface IGnerosRepository
         /// </summary>
-        private IGeneroRepository _generoRepository { get; set;  }
+        private IGeneroRepository _generoRepository { get; set; }
 
         /// <summary>
         /// instancia o objeto para que haja referencia aos métodos no repositótio
@@ -48,6 +49,27 @@ namespace senai_filmes_wwebApi.Controllers
 
             //Retorna o status code 200 (ok) com a lista de gênero no formato JSON
             return Ok(listaGeneros);
+        }
+
+        /// <summary>
+        /// cadastra um novo genero
+        /// </summary>
+        /// <param name="novoGenero">objeto que recebeo novo genero</param>
+        /// <returns>cone 201</returns>
+        [HttpPost]
+        public IActionResult Post(GeneroDomain novoGenero)
+        {
+            _generoRepository.Cadastrar(novoGenero);
+
+            return StatusCode(201);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            _generoRepository.Deletar(id);
+
+            return StatusCode(200);
         }
     }
 }
