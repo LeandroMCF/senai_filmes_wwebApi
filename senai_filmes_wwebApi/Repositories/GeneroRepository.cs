@@ -27,7 +27,21 @@ namespace senai_filmes_wwebApi.Repositories
 
         public void AtualizarIdUrl(int id, GeneroDomain genero)
         {
-            throw new NotImplementedException();
+            using (SqlConnection con = new SqlConnection(conexao))
+            {
+                string atualizando = "UPDATE Generos SET Nome = '@Nome' WHERE IdGenero = @id";
+
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand(atualizando, con))
+                {
+                    cmd.Parameters.AddWithValue("@Nome", genero.Nome);
+
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         public GeneroDomain BuscarPorId(int id)
@@ -43,12 +57,14 @@ namespace senai_filmes_wwebApi.Repositories
         {
             using (SqlConnection con = new SqlConnection(conexao))
             {
-                string adicionando = "INSERT INTO Generos(Nome) VALUES ('" + novoGenero.Nome +  "')";
+                string adicionando = "INSERT INTO Generos(Nome) VALUES(@Nome)";
 
                 con.Open();
 
                 using (SqlCommand cmd = new SqlCommand(adicionando, con))
                 {
+                    cmd.Parameters.AddWithValue("@Nome", novoGenero.Nome);
+
                     //Executa o adicionando 
                     cmd.ExecuteNonQuery();
                 }
@@ -59,12 +75,14 @@ namespace senai_filmes_wwebApi.Repositories
         {
             using (SqlConnection con = new SqlConnection(conexao))
             {
-                string excluindo = "DELETE FROM Generos WHERE IdGenero =" + id + "";
+                string excluindo = "DELETE FROM Generos WHERE IdGenero = @id";
 
                 con.Open();
 
                 using (SqlCommand cmd = new SqlCommand(excluindo, con))
                 {
+                    cmd.Parameters.AddWithValue("@id", id);
+
                     cmd.ExecuteNonQuery();
                 }
             }

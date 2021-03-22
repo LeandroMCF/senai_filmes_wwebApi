@@ -71,5 +71,13 @@ namespace senai_filmes_wwebApi.Controllers
 
             return StatusCode(200);
         }
+
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, GeneroDomain genero)
+        {
+            _generoRepository.AtualizarIdUrl(id, genero);
+
+            return StatusCode(200);
+        }
     }
 }
