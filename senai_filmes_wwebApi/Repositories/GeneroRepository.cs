@@ -22,7 +22,22 @@ namespace senai_filmes_wwebApi.Repositories
 
         public void AtualizarIdCorpo(GeneroDomain genero)
         {
-            throw new NotImplementedException();
+            using (SqlConnection con = new SqlConnection(conexao))
+            {
+                string atualizando = "UPDATE Generos SET Nome = '@Nome' WHERE IdGenero = @id";
+
+
+                using (SqlCommand cmd = new SqlCommand(atualizando, con))
+                {
+                    cmd.Parameters.AddWithValue("@Nome", genero.Nome);
+
+                    cmd.Parameters.AddWithValue("@id", genero.IdGenero);
+
+                    con.Open();
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         public void AtualizarIdUrl(int id, GeneroDomain genero)
@@ -46,7 +61,37 @@ namespace senai_filmes_wwebApi.Repositories
 
         public GeneroDomain BuscarPorId(int id)
         {
-            throw new NotImplementedException();
+            using (SqlConnection con = new SqlConnection(conexao))
+            {
+                string buscar = "SELECT IdGenero, Nome FROM Generos WHERE IdGenero = @id";
+
+                con.Open();
+
+                SqlDataReader rdr;
+
+                using (SqlCommand cmd = new SqlCommand(buscar, con))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    rdr = cmd.ExecuteReader();
+
+                    if (rdr.Read())
+                    {
+                        GeneroDomain generoBuscando = new GeneroDomain
+                        {
+                            IdGenero = Convert.ToInt32(rdr[0]),
+
+                            Nome = rdr[1].ToString()
+                        };
+
+                        return generoBuscando;
+
+                    }
+
+                    return null;
+
+                }
+            }
         }
 
         /// <summary>

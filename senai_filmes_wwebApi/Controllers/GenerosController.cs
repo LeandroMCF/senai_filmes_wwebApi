@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using senai_filmes_wwebApi.Domains;
 using senai_filmes_wwebApi.Interfaces;
@@ -18,7 +19,6 @@ namespace senai_filmes_wwebApi.Controllers
 
     //Define a rota de uma requisição será no formato dominio/api/nomeController
     [Route("api/[controller]")]
-
     //Define que é um controlador de API
     [ApiController]
 
@@ -41,6 +41,9 @@ namespace senai_filmes_wwebApi.Controllers
         /// Listar todos os generos
         /// </summary>
         /// <returns>Uma lista com todos os generos</returns>
+        
+        [Authorize]
+
         [HttpGet]
         public IActionResult Get()
         {
@@ -51,11 +54,29 @@ namespace senai_filmes_wwebApi.Controllers
             return Ok(listaGeneros);
         }
 
+        [Authorize(Roles = "Administrador")]
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            GeneroDomain generoBuscando = _generoRepository.BuscarPorId(id);
+
+            if (generoBuscando == null)
+            {
+                return NotFound("Nenhum genero foi encontrado");
+            }
+
+            return Ok(generoBuscando);
+        }
+
         /// <summary>
         /// cadastra um novo genero
         /// </summary>
         /// <param name="novoGenero">objeto que recebeo novo genero</param>
         /// <returns>cone 201</returns>
+        
+        [Authorize(Roles = "Administrador")] 
+
         [HttpPost]
         public IActionResult Post(GeneroDomain novoGenero)
         {
@@ -63,6 +84,8 @@ namespace senai_filmes_wwebApi.Controllers
 
             return StatusCode(201);
         }
+
+        [Authorize(Roles = "Administrador")]
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
@@ -72,12 +95,43 @@ namespace senai_filmes_wwebApi.Controllers
             return StatusCode(200);
         }
 
+        [Authorize(Roles = "Administrador")]
+
         [HttpPut("{id}")]
-        public IActionResult Put(int id, GeneroDomain genero)
+        public IActionResult PutId(int id, GeneroDomain genero)
         {
             _generoRepository.AtualizarIdUrl(id, genero);
 
             return StatusCode(200);
+        }
+
+        [HttpPut]
+        public IActionResult PutIdBody(GeneroDomain generoAtt)
+        {
+            GeneroDomain generoBuscando = _generoRepository.BuscarPorId(generoAtt.IdGenero);
+
+            if (generoBuscando != null)
+            {
+                try
+                {
+                    _generoRepository.AtualizarIdCorpo(generoAtt);
+
+                    return NoContent();
+                }
+                catch (Exception erro)
+                {
+                    return BadRequest(erro);
+                }
+            }
+
+            return NotFound
+                (
+                    new
+                    {
+                        erro = true,
+                        mensagen = "Gênero não encontrado!"
+                    }
+                );
         }
     }
 }
